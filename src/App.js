@@ -18,8 +18,8 @@ import 'reactjs-popup/dist/index.css';
 import { Slide } from 'react-slideshow-image';
 import 'react-slideshow-image/dist/styles.css'
 import './App.css';
-import image1 from './image/test1.jpg'
-import image2 from './image/test2.jpg'
+import image1 from './image/test4'
+import image2 from './image/test5.jpg'
 import image3 from './image/test3.png'
 
 const styles = makeStyles((theme) => ({

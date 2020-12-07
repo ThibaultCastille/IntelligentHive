@@ -4,6 +4,7 @@ import "react-tabs/style/react-tabs.css";
 import Render2 from './lmTemp';
 import DynamicForm from './TempExtern';
 import AutomationForm from './PhotoresistorTemp';
+import Humidity from './humidity';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -32,6 +33,7 @@ export default class FormPage extends Component {
               <Tab >Internal Temperature</Tab>
               <Tab> Photoresistor </Tab>
               <Tab>External Temperature</Tab>
+              <Tab>Humidity</Tab>
             </TabList>
             <TabPanel>
               <Render2 />
@@ -41,6 +43,9 @@ export default class FormPage extends Component {
             </TabPanel>
             <TabPanel>
               <DynamicForm  />
+            </TabPanel>
+            <TabPanel>
+              <Humidity  />
             </TabPanel>
           </Tabs>
       </div>

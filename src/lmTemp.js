@@ -4,6 +4,7 @@ import axios from "axios";
 import _, { transform } from "lodash";
 import Typography from '@material-ui/core/Typography';
 import { Paper, Grid, TextField, FormControlLabel, Checkbox, Container } from '@material-ui/core';
+import Chart from 'react-apexcharts'
 
 import up from './image/up.png'
 import down from './image/down.png'
@@ -14,7 +15,42 @@ export default class Render2 extends React.Component {
     this.state = { 
       lm35: 0,
       stock: [],
+      test: [],
+      test1: [],
+      series: [{
+        name: "lm35",
+        data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
+    }],
+    options: {
+      chart: {
+        height: 350,
+        type: 'line',
+        zoom: {
+          enabled: false
+        }
+      },
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        curve: 'straight'
+      },
+      title: {
+        text: 'History of the Internal Temperature',
+        align: 'left'
+      },
+      grid: {
+        row: {
+          colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+          opacity: 0.5
+        },
+      },
+    },
      };
+  }
+
+  componentWillMount() {
+    this.lm35Temp();
   }
 
   componentDidMount() {
@@ -38,7 +74,25 @@ export default class Render2 extends React.Component {
       .catch((err) => {
       console.log(err);
       });
-      console.log(this.state.lm35)
+//      console.log(this.state.lm35)
+     // console.log(this.state.stock)
+     var stock1 = [];
+     var stock2 = [];
+     var i = 0;
+      this.state.stock.map((filterItem) => {
+        return( 
+        stock1[i] = filterItem.Payload.lm35,
+        stock2[i] = i,
+        i = i + 1
+        )
+              })
+      var status =  [{
+        name: "lm35",
+        data: stock1
+    }]
+    this.setState({test: status})
+
+//        console.log(stock1)
       return (this.state.lm35)
   }
   render() {
@@ -71,7 +125,7 @@ export default class Render2 extends React.Component {
               ) : (
                 <p> You need {35 - this.state.lm35} °C more to reach the recommanded temperature </p>
              )}            </Typography>
-
+                     <Chart options={this.state.options} series={this.state.test} type="line" width={500} height={320} />
           </Container>
     </div>
   );

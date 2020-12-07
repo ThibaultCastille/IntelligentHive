@@ -11,15 +11,47 @@ import MenuIcon from '@material-ui/icons/Menu';
 import { Paper, Grid, TextField, FormControlLabel, Checkbox, Container } from '@material-ui/core';
 import { Face, Fingerprint } from '@material-ui/icons'
 import Modal from '@material-ui/core/Modal';
-import up from './image/up.png'
-import down from './image/down.png'
+import up from './image/up.png';
+import down from './image/down.png';
+import Chart from 'react-apexcharts';
 
 export default class FormPage extends Component {
   constructor(props) {
     super(props);
     this.state = { 
       photo: 0,
+      stock: [],
+        test: [],
+        options: {
+          chart: {
+            height: 350,
+            type: 'line',
+            zoom: {
+              enabled: false
+            }
+          },
+          dataLabels: {
+            enabled: false
+          },
+          stroke: {
+            curve: 'straight'
+          },
+          title: {
+            text: 'History of the Photoresistor Value',
+            align: 'left'
+          },
+          grid: {
+            row: {
+              colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+              opacity: 0.5
+            },
+          },
+        },
      };
+  }
+
+  componentWillMount() {
+    this.PhotoresistorTemp();
   }
 
   componentDidMount() {
@@ -34,13 +66,28 @@ export default class FormPage extends Component {
       axios.get('https://sc9uew29mj.execute-api.us-east-2.amazonaws.com/default/get-info')
       .then((response) => {
      this.setState( {
+      stock: response.data.Items,
       photo: response.data.Items.pop().Payload.photoresistor
        } )
       })
       .catch((err) => {
       console.log(err);
       });
-      console.log(this.state.photo)
+      var stock1 = [];
+      var stock2 = [];
+      var i = 0;
+       this.state.stock.map((filterItem) => {
+         return( 
+         stock1[i] = filterItem.Payload.photoresistor,
+         stock2[i] = i,
+         i = i + 1
+         )
+               })
+       var status =  [{
+         name: "photoresistor",
+         data: stock1
+     }]
+     this.setState({test: status})
   }
   render() {
     return(
@@ -68,7 +115,7 @@ export default class FormPage extends Component {
               ) : (
                 <p> The light is really low, be careful if the hive is outside, it can rains  </p>
              )}            </Typography>
-
+        <Chart options={this.state.options} series={this.state.test} type="line" width={500} height={320} />
           </Container>
     </div>
   );
