@@ -1,19 +1,10 @@
 import React, { Component } from 'react'
 import "react-tabs/style/react-tabs.css";
 import axios from "axios";
-import { makeStyles, withStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import { Paper, Grid, TextField, FormControlLabel, Checkbox, Container } from '@material-ui/core';
-import { Face, Fingerprint } from '@material-ui/icons'
-import Modal from '@material-ui/core/Modal';
-import up from './image/up.png';
-import down from './image/down.png';
 import Chart from 'react-apexcharts';
+import { Alert } from '@material-ui/lab';
 
 export default class FormPage extends Component {
   constructor(props) {
@@ -111,9 +102,9 @@ export default class FormPage extends Component {
             </Typography>
             <Typography variant="h5" align="center" color="textSecondary" paragraph>
             {this.state.photo > 400 ? (
-                <p> The light is high, be careful with the temperature, it can damage the hive</p>
+                <Alert severity="warning">The light is high, be careful with the temperature, it can damage the hive !</Alert>
               ) : (
-                <p> The light is really low, be careful if the hive is outside, it can rains  </p>
+                <Alert severity="warning">The light is really low, be careful if the hive is outside, it can rains!</Alert>
              )}            </Typography>
         <Chart options={this.state.options} series={this.state.test} type="line" width={500} height={320} />
           </Container>

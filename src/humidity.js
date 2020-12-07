@@ -4,12 +4,13 @@ import axios from "axios";
 import _, { transform } from "lodash";
 import Typography from '@material-ui/core/Typography';
 import { Paper, Grid, TextField, FormControlLabel, Checkbox, Container } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 
 export default class humidity extends React.Component {
   constructor(props) {
     super(props);
     this.state = { 
-      humidity: 0,
+      humidity: 50,
       stock: [],
      };
   }
@@ -32,7 +33,7 @@ export default class humidity extends React.Component {
         console.log(response)
      this.setState( {
        stock: response.data.Items,
-      humidity: 35
+      humidity: 50
        } )
       })
       .catch((err) => {
@@ -60,12 +61,12 @@ export default class humidity extends React.Component {
             </Typography>
             <Typography variant="h5" align="center" color="textSecondary" paragraph>
             {this.state.humidity > 60 ? (
-                <p> You need {this.state.humidity - 50} % less to reach the recommanded humidity </p>
+                <Alert severity="warning">You need {this.state.humidity - 50} % less to reach the recommanded humidity  !</Alert>
               ) : (
                 this.state.humidity < 40 ? (
-                    <p> You need {50 - this.state.humidity} % more to reach the recommanded humidity </p>
+                    <Alert severity="warning">You need {50 - this.state.humidity} % more to reach the recommanded humidity  !</Alert>
                   ) : (
-                    <p> You have a good humidity % </p>
+                    <p><Alert severity="success">You have the good % of humidity !</Alert> </p>
                  ) 
              )}            </Typography>
 

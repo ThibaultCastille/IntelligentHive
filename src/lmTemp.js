@@ -3,7 +3,8 @@ import "react-tabs/style/react-tabs.css";
 import axios from "axios";
 import _, { transform } from "lodash";
 import Typography from '@material-ui/core/Typography';
-import { Paper, Grid, TextField, FormControlLabel, Checkbox, Container } from '@material-ui/core';
+import { Paper, Grid, TextField, FormControlLabel, Checkbox, Container} from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import Chart from 'react-apexcharts'
 
 import up from './image/up.png'
@@ -121,9 +122,9 @@ export default class Render2 extends React.Component {
             </Typography>
             <Typography variant="h5" align="center" color="textSecondary" paragraph>
             {this.state.lm35 > 35 ? (
-                <p> You need {this.state.lm35 - 35} °C less to reach the recommanded temperature </p>
+                <Alert severity="warning">You need {this.state.lm35 - 35} °C less to reach the recommanded temperature  !</Alert>
               ) : (
-                <p> You need {35 - this.state.lm35} °C more to reach the recommanded temperature </p>
+                <Alert severity="warning">You need {35 - this.state.lm35} °C more to reach the recommanded temperature !</Alert>
              )}            </Typography>
                      <Chart options={this.state.options} series={this.state.test} type="line" width={500} height={320} />
           </Container>

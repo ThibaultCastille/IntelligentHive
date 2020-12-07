@@ -8,11 +8,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import { Paper, Grid, TextField, FormControlLabel, Checkbox, Container } from '@material-ui/core';
-import { Face, Fingerprint } from '@material-ui/icons'
-import Modal from '@material-ui/core/Modal';
+import { Paper, Grid, TextField, FormControlLabel, Checkbox, Container, Alert } from '@material-ui/core';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { Slide } from 'react-slideshow-image';
@@ -135,7 +131,7 @@ class Home extends Component{
       <div>
       <AppBar position="static">
         <Toolbar>
-          <Typography variant="h6" className={classes.title}>
+          <Typography variant="h6" className={classes.title} style={{flexGrow: 1 }}>
             Inelligent Hive
           </Typography>
           <Popup
@@ -179,9 +175,6 @@ class Home extends Component{
                                     color="primary"
                                 />
                             } label="Remember me" />
-                        </Grid>
-                        <Grid item>
-                            <Button disableFocusRipple disableRipple style={{ textTransform: "none" }} variant="text" color="primary">Forgot password ?</Button>
                         </Grid>
                     </Grid>
                     <Grid container justify="center" style={{ marginTop: '10px' }}>
@@ -275,7 +268,7 @@ export default class App extends Component {
         <div>
             <div className="container">
                 <div>
-                    <Router>
+                    <Router >
                         <div>
                             <Route exact path="/" component={Home} />
                             <PrivateRoute path="/FormPage" component={FormPage} />

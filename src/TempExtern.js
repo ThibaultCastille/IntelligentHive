@@ -6,6 +6,7 @@ import { Paper, Grid, TextField, FormControlLabel, Checkbox, Container } from '@
 import up from './image/up.png'
 import down from './image/down.png'
 import Chart from 'react-apexcharts'
+import { Alert } from '@material-ui/lab';
 
 export default class DynamicForm extends Component {
   constructor(props) {
@@ -108,9 +109,10 @@ export default class DynamicForm extends Component {
             </Typography>
             <Typography variant="h5" align="center" color="textSecondary" paragraph>
             {this.state.ds18b20 > 15 ? (
-                <p> You need {this.state.ds18b20 - 15} °C less to reach the recommanded temperature </p>
+                <Alert severity="warning">You need {this.state.ds18b20 - 15} °C less to reach the recommanded temperature !</Alert>
               ) : (
-                <p> You need {15 - this.state.ds18b20} °C more to reach the recommanded temperature </p>
+                <Alert severity="warning">You need {15 - this.state.ds18b20} °C more to reach the recommanded temperature !</Alert>
+
              )}            </Typography>
             <Chart options={this.state.options} series={this.state.test} type="line" width={500} height={320} />
           </Container>
