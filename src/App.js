@@ -3,6 +3,44 @@ import "react-tabs/style/react-tabs.css";
 import FormPage from './FormPage'
 import {BrowserRouter as Router, Route, Link, Redirect, withRouter} from 'react-router-dom'
 import axios from "axios";
+import { makeStyles, withStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import { Paper, Grid, TextField, FormControlLabel, Checkbox, Container } from '@material-ui/core';
+import { Face, Fingerprint } from '@material-ui/icons'
+import Modal from '@material-ui/core/Modal';
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
+import { Slide } from 'react-slideshow-image';
+import 'react-slideshow-image/dist/styles.css'
+import './App.css';
+import image1 from './image/test1.jpg'
+import image2 from './image/test2.jpg'
+import image3 from './image/test3.png'
+
+const styles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+  },
+  title: {
+    flexGrow: 1,
+  },
+}));
+
+const properties = {
+  duration: 3000,
+  transitionDuration: 500,
+  infinite: true,
+  indicators: true,
+  arrows: true
+}
 
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
@@ -52,8 +90,17 @@ class Home extends Component{
     });
   }
 
+  showModal = () => {
+    this.setState({ show: true });
+  };
+
+  hideModal = () => {
+    this.setState({ show: false });
+  };
+
   async handleSubmits(event) {
-    event.preventDefault();
+  //  event.preventDefault();
+  console.log(this.state.name);
     const { name, message } = this.state;
     await axios.post(
       'https://zopatw7dn8.execute-api.us-east-2.amazonaws.com/default/LoginWriteSeverless',
@@ -62,7 +109,7 @@ class Home extends Component{
   }
 
   async handleSubmitLogin(event) {
-    event.preventDefault();
+//    event.preventDefault();
     axios.get('https://itqx5sskv4.execute-api.us-east-2.amazonaws.com/default/LoginReadSeverless')
       .then((response) => {
         response.data.Items.map((person, index) => (
@@ -77,66 +124,155 @@ class Home extends Component{
 
   render() {
     const { checking } = this.state
-
+    const classes = withStyles();
+//    const [modalStyle] = React.useState(getModalStyle);
+  //  const [open, setOpen] = React.useState(false);
+  
     if (checking === true) {
       return <Redirect to='./FormPage' />
     }
     return (
       <div>
-        <p>Inscription</p>
-        <form name="test1" onSubmit={this.handleSubmits}>
-          <label>Email :</label>
-          <input
-            type="email"
-            name="name"
-            onChange={this.handleChange}
-            value={this.state.name}
-          />
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" className={classes.title}>
+            Inelligent Hive
+          </Typography>
+          <Popup
+    trigger={<Button color="inherit">Login</Button>}
+    modal
+    nested
+  >
+    {close => (
+      <div className="modal">
+        <button className="close" onClick={close}>
+          &times;
+        </button>
+        <div className="header"> Login </div>
+        <div className="content">
+                <div className={classes.margin}>
+                    <Grid container spacing={8} alignItems="flex-end">
+                        <Grid item md={true} sm={true} xs={true}>
+                        <TextField id="username" label="Username" type="email" defaultValue={this.state.email}
+        onChange={event => {
+          const { value } = event.target;
+          this.setState({ email: value });
+        }}
+         fullWidth autoFocus required />
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={8} alignItems="flex-end">
+                        <Grid item md={true} sm={true} xs={true}>
+                        <TextField id="Password" label="Password" type="password" defaultValue={this.state.password}
+        onChange={event => {
+          const { value } = event.target;
+          this.setState({ password: value });
+        }}
+         fullWidth autoFocus required />
 
-
-          <label>Password:</label>
-          <input
-            type="password"
-            name="message"
-            onChange={this.handleChange}
-            value={this.state.message}
-          />
-
-          <button type="submit">Send</button>
-        </form>
-
-        <p>Connexion</p>
-        <form name="test2" onSubmit={this.handleSubmitLogin}>
-          <label>Email :</label>
-          <input
-            type="email"
-            name="email"
-            onChange={this.handleChange}
-            value={this.state.email}
-          />
-
-
-          <label>Password:</label>
-          <input
-            type="password"
-            name="password"
-            onChange={this.handleChange}
-            value={this.state.password}
-          />
-
-          <button type="submit">Send</button>
-        </form>
+                        </Grid>
+                    </Grid>
+                    <Grid container alignItems="center" justify="space-between">
+                        <Grid item>
+                            <FormControlLabel control={
+                                <Checkbox
+                                    color="primary"
+                                />
+                            } label="Remember me" />
+                        </Grid>
+                        <Grid item>
+                            <Button disableFocusRipple disableRipple style={{ textTransform: "none" }} variant="text" color="primary">Forgot password ?</Button>
+                        </Grid>
+                    </Grid>
+                    <Grid container justify="center" style={{ marginTop: '10px' }}>
+                        <Button variant="outlined" color="primary" style={{ textTransform: "none" }} onClick={() => { this.handleSubmitLogin() }}>Login</Button>
+                    </Grid>
+                </div>
+        </div>
+      </div>
+    )}
+  </Popup>
+  <Popup
+    trigger={<Button color="inherit">Register</Button>}
+    modal
+    nested
+  >
+    {close => (
+      <div className="modal">
+        <button className="close" onClick={close}>
+          &times;
+        </button>
+        <div className="header"> Register </div>
+        <div className="content">
+                <div className={classes.margin}>
+                    <Grid container spacing={8} alignItems="flex-end">
+                        <Grid item md={true} sm={true} xs={true}>
+                            <TextField id="username" label="Username" type="email" defaultValue={this.state.name}
+        onChange={event => {
+          const { value } = event.target;
+          this.setState({ name: value });
+        }}
+         fullWidth autoFocus required />
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={8} alignItems="flex-end">
+                        <Grid item md={true} sm={true} xs={true}>
+                            <TextField id="username" label="Password" type="password" defaultValue={this.state.message}
+        onChange={event => {
+          const { value } = event.target;
+          this.setState({ message: value });
+        }}
+        fullWidth required />
+                        </Grid>
+                    </Grid>
+                    <Grid container justify="center" style={{ marginTop: '10px' }}>
+                        <Button variant="outlined" color="primary" style={{ textTransform: "none" }} onClick={() => { this.handleSubmits() }}>Register</Button>
+                    </Grid>
+                </div>
+        </div>
+      </div>
+    )}
+  </Popup>
+        </Toolbar>
+      </AppBar>
+      <div className="container">
+          <header className="jumbotron">
+          <Slide {...properties}>
+                <div className="each-slide">
+                    <div style={{ 'backgroundImage': `url(${image1})` }}>
+                    </div>
+                </div>
+                <div className="each-slide">
+                    <div style={{ 'backgroundImage': `url(${image2})` }}>
+                    </div>
+                </div>
+                <div className="each-slide">
+                    <div style={{ 'backgroundImage': `url(${image3})` }}>
+                    </div>
+                </div>
+            </Slide>
+            </header>
+        </div>
+        <div className={classes.heroContent}>
+          <Container maxWidth="sm">
+            <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
+              IntelligentHive
+            </Typography>
+            <Typography variant="h5" align="center" color="textSecondary" paragraph>
+             IntelligentHive is a ProjectMaker. The goal of this project is to make a website that contains in real time all the important information of your hive. For this, we use amazon tools (AWS).
+            </Typography>
+          </Container>
+        </div>
       </div>
     );
   }
 }
 
-
 export default class App extends Component {
   render() {
+//    const classes = withStyles();
     return (
         <div>
-
             <div className="container">
                 <div>
                     <Router>

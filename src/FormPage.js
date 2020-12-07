@@ -4,6 +4,9 @@ import "react-tabs/style/react-tabs.css";
 import Render2 from './lmTemp';
 import DynamicForm from './TempExtern';
 import AutomationForm from './PhotoresistorTemp';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 
 
 export default class FormPage extends Component {
@@ -17,11 +20,18 @@ export default class FormPage extends Component {
   render() {
     return (
       <div>
+ <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" >
+            Inelligent Hive
+          </Typography>
+        </Toolbar>
+      </AppBar>
           <Tabs selectedIndex={this.state.tabIndex} onSelect={tabIndex => this.setState({ tabIndex })}>
             <TabList>
-              <Tab >lm35</Tab>
+              <Tab >Internal Temperature</Tab>
               <Tab> Photoresistor </Tab>
-              <Tab>Dynamique</Tab>
+              <Tab>External Temperature</Tab>
             </TabList>
             <TabPanel>
               <Render2 />
