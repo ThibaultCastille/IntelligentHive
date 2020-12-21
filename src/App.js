@@ -17,6 +17,7 @@ import './App.css';
 import image1 from './image/test4'
 import image2 from './image/test5.jpg'
 import image3 from './image/test3.png'
+import logopng from './image/logo1.png'
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -129,10 +130,11 @@ class Home extends Component{
     }
     return (
       <div>
-      <AppBar position="static">
+      <AppBar position="static" style={{background: "orange"}}>
         <Toolbar>
+        <img src={logopng} className="photos_youtube" width="75px" height="75px"  alt="logopng"/>
           <Typography variant="h6" className={classes.title} style={{flexGrow: 1 }}>
-            Inelligent Hive
+            Intelligent Hive
           </Typography>
           <Popup
     trigger={<Button color="inherit">Login</Button>}

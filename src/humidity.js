@@ -5,6 +5,10 @@ import _, { transform } from "lodash";
 import Typography from '@material-ui/core/Typography';
 import { Paper, Grid, TextField, FormControlLabel, Checkbox, Container } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
+import Chart from 'react-apexcharts';
+import { Drawer, Button, ButtonToolbar, Radio, RadioGroup,FormGroup } from 'rsuite';
+import 'rsuite/dist/styles/rsuite-default.css';
+
 
 export default class humidity extends React.Component {
   constructor(props) {
@@ -12,11 +16,53 @@ export default class humidity extends React.Component {
     this.state = { 
       humidity: 50,
       stock: [],
+      test: [],
+      test1: [],
+      raw: "Invisible",
+      series: [{
+        name: "lm35",
+        data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
+    }],
+    options: {
+      chart: {
+
+        height: 350,
+        type: 'line',
+        zoom: {
+          enabled: false
+        }
+      },
+      fill: {
+        colors: ['#FFA500', '#E91E63', '#9C27B0']
+      },
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        colors: ['orange'],
+        curve: 'straight'
+      },
+      title: {
+        text: 'History of the Internal Temperature',
+        align: 'left'
+      },
+      grid: {
+        row: {
+          colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+          opacity: 0.5
+        },
+      },
+    },
+    show: false,
+    name: "Day",
+    month : [],
      };
+     this.close = this.close.bind(this);
+     this.toggleDrawer = this.toggleDrawer.bind(this);
   }
 
   componentDidMount() {
-    this.interval = setInterval(() => this.lm35Temp(), 10000);
+    this.interval = setInterval(() => this.lm35Temp(), 5000);
   }
   componentWillUnmount() {
     clearInterval(this.interval);
@@ -26,27 +72,161 @@ export default class humidity extends React.Component {
       this.lm35Temp();
   }
 
+  close() {
+    this.setState({
+      show: false
+    });
+    this.lm35Temp();
+  }
+  toggleDrawer() {
+    this.setState({ show: true });
+  }
+
+  numAverage(a) {
+    var b = a.length,
+        c = 0, i;
+    for (i = 0; i < b; i++){
+      c += Number(a[i]);
+    }
+    return c/b;
+  }
+
+  value_chart(stock1) {
+    var number = stock1.length;
+    var new_raw = [];
+    var new_raw1 = [];
+
+    if (this.state.name === "Day")
+      number = 12;
+      
+    for (var i = 0; i < number; i++) {
+      new_raw[i] = "55";
+    }
+    var stock_raw = {
+      name: "Recommanded",
+      data: new_raw
+    }
+    var stock_raw_bar = {
+      name: "Recommanded",
+      data: new_raw
+    }
+    if (this.state.name === "Day") {
+      var get = stock1.slice(Math.max(stock1.length - 12, 0));
+      var status =  [{
+        name: "humidity",
+        data: get,
+      }]
+      if (this.state.raw === "Visible")
+        status.push(stock_raw)
+      this.setState({test: status})
+    }
+    if (this.state.name === "Month") {
+      this.setState({month : []})
+      var i,j,temparray,chunk = 6;
+        for (i=0,j=stock1.length; i<j; i+=chunk) {
+        temparray = stock1.slice(i,i+chunk);
+        var moyenne = this.numAverage(temparray);
+          this.state.month.push(moyenne);
+      }
+        number = this.state.month.length;
+        for (var z = 0; z < number; z++) {
+          new_raw1[z] = "55";
+        }
+        var stock_raw1 = {
+          name: "Recommanded",
+          data: new_raw1
+        }
+      var statusss =  [{
+        name: "humidity",
+        data: this.state.month
+      }]
+      if (this.state.raw === "Visible")
+        statusss.push(stock_raw1)
+
+      this.setState({test: statusss})
+    }
+    if (this.state.name !== "Day" && this.state.name !== "Month") {
+      var statuss =  [{
+        name: "humidity",
+        data: stock1,
+      }]
+      if (this.state.raw === "Visible")
+      statuss.push(stock_raw_bar)
+
+      this.setState({test: statuss})
+    }
+  }
+
   lm35Temp() {
-//    var stock = this.state.lm35,
-      axios.get('https://sc9uew29mj.execute-api.us-east-2.amazonaws.com/default/get-info')
-      .then((response) => {
-        console.log(response)
-     this.setState( {
-       stock: response.data.Items,
-      humidity: 50
-       } )
-      })
-      .catch((err) => {
-      console.log(err);
-      });
-    //  console.log(this.state.lm35)
-    //  return (this.state.lm35)
+    axios.get('https://sc9uew29mj.execute-api.us-east-2.amazonaws.com/default/get-info')
+    .then((response) => {
+   this.setState( {
+    stock: response.data.Items,
+    humidity: response.data.Items.pop().Payload.humidity
+     } )
+    })
+    .catch((err) => {
+    console.log(err);
+    });
+    var stock1 = [];
+    var stock2 = [];
+    var i = 0;
+     this.state.stock.map((filterItem) => {
+       return( 
+       stock1[i] = filterItem.Payload.humidity,
+       stock2[i] = i,
+       i = i + 1
+       )
+             })
+     var status =  [{
+       name: "humidity",
+       data: stock1
+   }]
+   this.value_chart(stock1);
+
   }
   render() {
     //   const { handleSubmit, handleChange} = this.props
     return(
       <div>
+         <Drawer
+          show={this.state.show}
+          onHide={this.close}
+          size={"xs"}
+        >
+          <Drawer.Header>
+            <Drawer.Title>Option</Drawer.Title>
+          </Drawer.Header>
+          <Drawer.Body>
+          Chart Option :
+          <FormGroup controlId="radioList">
+            <RadioGroup name="radioList" inline appearance="picker" value={this.state.name} onChange={(value) => {
+      this.setState({name: value}); }}>
+              <Radio value="Day">Last 24 hours</Radio>
+              <Radio value="Month">Last 30 days</Radio>
+              <Radio value="All">All</Radio>
+            </RadioGroup>
+          </FormGroup>
+          <br></br>
+          Chart Option :
+          <FormGroup controlId="radioList">
+            <RadioGroup name="radioList" inline appearance="picker" value={this.state.raw} onChange={(value) => {
+      this.setState({raw: value}); }}>
+              <Radio value="Invisible">Simple Chart</Radio>
+              <Radio value="Visible">Show Recommanded</Radio>
+            </RadioGroup>
+          </FormGroup>
+          </Drawer.Body>
+          <Drawer.Footer>
+            <Button onClick={this.close} appearance="primary">Confirm</Button>
+            <Button onClick={this.close} appearance="subtle">Cancel</Button>
+          </Drawer.Footer>
+        </Drawer>
+
         <Container maxWidth="sm">
+        <ButtonToolbar>
+          <Button onClick={this.toggleDrawer}>⚙️</Button>
+        </ButtonToolbar>
             <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
               Humidity
             </Typography>
@@ -60,16 +240,25 @@ export default class humidity extends React.Component {
             The best humidity in the nest of a healthy strong colony is between 50% and 60%.
             </Typography>
             <Typography variant="h5" align="center" color="textSecondary" paragraph>
+              <br></br><br></br>
             {this.state.humidity > 60 ? (
                 <Alert severity="warning">You need {this.state.humidity - 50} % less to reach the recommanded humidity  !</Alert>
               ) : (
                 this.state.humidity < 40 ? (
                     <Alert severity="warning">You need {50 - this.state.humidity} % more to reach the recommanded humidity  !</Alert>
                   ) : (
-                    <p><Alert severity="success">You have the good % of humidity !</Alert> </p>
+                    <p><Alert severity="success">You have the good % of humidity ! Try keeping this humidity ! </Alert> </p>
                  ) 
              )}            </Typography>
-
+               {this.state.name === "Day" ? (
+                 <Chart options={this.state.options} series={this.state.test} type="line" width={430} height={300} />
+              ) : (
+                this.state.name === "Month" ? (
+                  <Chart options={this.state.options} series={this.state.test} type="bar" width={430} height={301} />
+               ) : (
+                <Chart options={this.state.options} series={this.state.test} type="bar" width={430} height={302} />
+              )
+             )}
           </Container>
     </div>
   );

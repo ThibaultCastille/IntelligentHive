@@ -8,7 +8,22 @@ import Humidity from './humidity';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import logopng from './image/logo1.png'
 
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import Button from '@material-ui/core/Button';
+import sizing  from '@material-ui/system';
+
+var cardStyle = {
+  display: 'block',
+  width: '24vw',
+  transitionDuration: '0.3s',
+  height: '45vw',
+  marginRight: 16,
+  float: "left",
+}
 
 export default class FormPage extends Component {
   constructor(props) {
@@ -21,33 +36,35 @@ export default class FormPage extends Component {
   render() {
     return (
       <div>
- <AppBar position="static">
+ <AppBar position="static"  style={{background: "orange"}}>
         <Toolbar>
+        <img src={logopng} className="photos_youtube" width="75px" height="75px"  alt="logopng"/>
           <Typography variant="h6" >
-            Inelligent Hive
+            Intelligent Hive
           </Typography>
         </Toolbar>
       </AppBar>
-          <Tabs selectedIndex={this.state.tabIndex} onSelect={tabIndex => this.setState({ tabIndex })}>
-            <TabList>
-              <Tab >Internal Temperature</Tab>
-              <Tab> Photoresistor </Tab>
-              <Tab>External Temperature</Tab>
-              <Tab>Humidity</Tab>
-            </TabList>
-            <TabPanel>
-              <Render2 />
-            </TabPanel>
-            <TabPanel>
-              <AutomationForm />
-            </TabPanel>
-            <TabPanel>
-              <DynamicForm  />
-            </TabPanel>
-            <TabPanel>
-              <Humidity  />
-            </TabPanel>
-          </Tabs>
+      <br ></br>
+      <Card style={cardStyle} >
+      <CardContent>
+     <Render2 />
+      </CardContent>
+    </Card>
+    <Card style={cardStyle} >
+      <CardContent>
+     <AutomationForm />
+      </CardContent>
+    </Card>
+    <Card style={cardStyle} >
+      <CardContent>
+     <DynamicForm />
+      </CardContent>
+    </Card>
+    <Card style={cardStyle} >
+      <CardContent>
+     <Humidity />
+      </CardContent>
+    </Card>
       </div>
     );
   }

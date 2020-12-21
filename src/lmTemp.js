@@ -5,8 +5,11 @@ import _, { transform } from "lodash";
 import Typography from '@material-ui/core/Typography';
 import { Paper, Grid, TextField, FormControlLabel, Checkbox, Container} from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import Chart from 'react-apexcharts'
+import Chart from 'react-apexcharts';
 
+
+import { Drawer, Button, ButtonToolbar, Radio, RadioGroup,FormGroup } from 'rsuite';
+import 'rsuite/dist/styles/rsuite-default.css';
 import up from './image/up.png'
 import down from './image/down.png'
 
@@ -18,22 +21,25 @@ export default class Render2 extends React.Component {
       stock: [],
       test: [],
       test1: [],
-      series: [{
-        name: "lm35",
-        data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
-    }],
+      stock1: [],
+      raw: "Invisible",
     options: {
       chart: {
+
         height: 350,
         type: 'line',
         zoom: {
           enabled: false
         }
       },
+      fill: {
+        colors: ['#FFA500', '#E91E63', '#9C27B0']
+      },
       dataLabels: {
         enabled: false
       },
       stroke: {
+        colors: ['orange'],
         curve: 'straight'
       },
       title: {
@@ -47,23 +53,121 @@ export default class Render2 extends React.Component {
         },
       },
     },
+    show: false,
+    name: "Day",
+    month : [],
      };
+     this.close = this.close.bind(this);
+     this.toggleDrawer = this.toggleDrawer.bind(this);
+     this.handleChange = this.handleChange.bind(this);
   }
 
   componentWillMount() {
+//    this.close();
     this.lm35Temp();
+    
   }
 
   componentDidMount() {
-    this.interval = setInterval(() => this.lm35Temp(), 10000);
+    this.interval = setInterval(() => this.lm35Temp(), 5000);
   }
   componentWillUnmount() {
     clearInterval(this.interval);
   }
+  close() {
+    this.setState({
+      show: false
+    });
+    this.lm35Temp();
+  }
+  toggleDrawer() {
+    this.setState({ show: true });
+  }
 
+  handleChange(event) {
+    var inputValue = event.target.value;
+    this.setState({
+      show: false
+    });
+    console.log(inputValue);
+  }
+
+  numAverage(a) {
+    var b = a.length,
+        c = 0, i;
+    for (i = 0; i < b; i++){
+      c += Number(a[i]);
+    }
+    return c/b;
+  }
+
+  value_chart(stock1) {
+    var number = stock1.length;
+    var new_raw = [];
+    var new_raw1 = [];
+
+    if (this.state.name === "Day")
+      number = 12;
+      
+    for (var i = 0; i < number; i++) {
+      new_raw[i] = "35";
+    }
+    var stock_raw = {
+      name: "Recommanded",
+      data: new_raw
+    }
+    var stock_raw_bar = {
+      name: "Recommanded",
+      data: new_raw
+    }
+    if (this.state.name === "Day") {
+      var get = stock1.slice(Math.max(stock1.length - 12, 0));
+      var status =  [{
+        name: "lm35",
+        data: get,
+      }]
+      if (this.state.raw === "Visible")
+        status.push(stock_raw)
+      this.setState({test: status})
+    }
+    if (this.state.name === "Month") {
+      this.setState({month : []})
+      var i,j,temparray,chunk = 6;
+        for (i=0,j=stock1.length; i<j; i+=chunk) {
+        temparray = stock1.slice(i,i+chunk);
+        var moyenne = this.numAverage(temparray);
+          this.state.month.push(moyenne);
+      }
+        number = this.state.month.length;
+        for (var z = 0; z < number; z++) {
+          new_raw1[z] = "35";
+        }
+        var stock_raw1 = {
+          name: "Recommanded",
+          data: new_raw1
+        }
+      var statusss =  [{
+        name: "lm35",
+        data: this.state.month
+      }]
+      if (this.state.raw === "Visible")
+        statusss.push(stock_raw1)
+
+      this.setState({test: statusss})
+    }
+    if (this.state.name !== "Day" && this.state.name !== "Month") {
+      var statuss =  [{
+        name: "lm35",
+        data: stock1,
+      }]
+      if (this.state.raw === "Visible")
+      statuss.push(stock_raw_bar)
+
+      this.setState({test: statuss})
+    }
+  }
 
   lm35Temp() {
-//    var stock = this.state.lm35,
       axios.get('https://sc9uew29mj.execute-api.us-east-2.amazonaws.com/default/get-info')
       .then((response) => {
         console.log(response)
@@ -75,8 +179,6 @@ export default class Render2 extends React.Component {
       .catch((err) => {
       console.log(err);
       });
-//      console.log(this.state.lm35)
-     // console.log(this.state.stock)
      var stock1 = [];
      var stock2 = [];
      var i = 0;
@@ -87,20 +189,53 @@ export default class Render2 extends React.Component {
         i = i + 1
         )
               })
-      var status =  [{
-        name: "lm35",
-        data: stock1
-    }]
-    this.setState({test: status})
-
-//        console.log(stock1)
-      return (this.state.lm35)
+      this.value_chart(stock1);
   }
+
   render() {
     //   const { handleSubmit, handleChange} = this.props
     return(
       <div>
+        <Drawer
+          show={this.state.show}
+          onHide={this.close}
+          size={"xs"}
+        >
+          <Drawer.Header>
+            <Drawer.Title>Option</Drawer.Title>
+          </Drawer.Header>
+          <Drawer.Body>
+          Chart Option :
+          <FormGroup controlId="radioList">
+            <RadioGroup name="radioList" inline appearance="picker" value={this.state.name} onChange={(value) => {
+      this.setState({name: value}); }}>
+              <Radio value="Day">Last 24 hours</Radio>
+              <Radio value="Month">Last 30 days</Radio>
+              <Radio value="All">All</Radio>
+            </RadioGroup>
+          </FormGroup>
+          <br></br>
+          Chart Option :
+          <FormGroup controlId="radioList">
+            <RadioGroup name="radioList" inline appearance="picker" value={this.state.raw} onChange={(value) => {
+      this.setState({raw: value}); }}>
+              <Radio value="Invisible">Simple Chart</Radio>
+              <Radio value="Visible">Show Recommanded</Radio>
+            </RadioGroup>
+          </FormGroup>
+  
+          </Drawer.Body>
+          <Drawer.Footer>
+            <Button onClick={this.close} appearance="primary">Confirm</Button>
+            <Button onClick={this.close} appearance="subtle">Cancel</Button>
+          </Drawer.Footer>
+        </Drawer>
+
         <Container maxWidth="sm">
+        <ButtonToolbar>
+          <Button onClick={this.toggleDrawer}>⚙️</Button>
+        </ButtonToolbar>
+
             <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
               Internal Temperature
             </Typography>
@@ -113,21 +248,22 @@ export default class Render2 extends React.Component {
             <Typography variant="h5" align="center" color="textSecondary" paragraph>
             The best temperature for a hive is 35°C.
             </Typography>
-            <Typography variant="h5" align="center" color="textPrimary" paragraph>
-            {this.state.lm35 > 35 ? (
-             <img src={down} alt="down" />
-              ) : (
-           <img src={up} alt="up" />
-             )}
-            </Typography>
             <Typography variant="h5" align="center" color="textSecondary" paragraph>
             {this.state.lm35 > 35 ? (
                 <Alert severity="warning">You need {this.state.lm35 - 35} °C less to reach the recommanded temperature  !</Alert>
               ) : (
                 <Alert severity="warning">You need {35 - this.state.lm35} °C more to reach the recommanded temperature !</Alert>
              )}            </Typography>
-                     <Chart options={this.state.options} series={this.state.test} type="line" width={500} height={320} />
           </Container>
+          {this.state.name === "Day" ? (
+                 <Chart options={this.state.options} series={this.state.test} type="line" width={430} height={320} />
+              ) : (
+                this.state.name === "Month" ? (
+                  <Chart options={this.state.options} series={this.state.test} type="bar" width={430} height={321} />
+               ) : (
+                <Chart options={this.state.options} series={this.state.test} type="bar" width={430} height={322} />
+              )
+             )}
     </div>
   );
 }
