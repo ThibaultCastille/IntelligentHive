@@ -8,7 +8,9 @@ import { Alert } from '@material-ui/lab';
 import Chart from 'react-apexcharts';
 import { Drawer, Button, ButtonToolbar, Radio, RadioGroup,FormGroup } from 'rsuite';
 import 'rsuite/dist/styles/rsuite-default.css';
-
+import im_hive from './image/1S.png'
+import im_hive_valid from './image/2S.png'
+import photo_pres from './image/humidity.png'
 
 export default class humidity extends React.Component {
   constructor(props) {
@@ -161,8 +163,8 @@ export default class humidity extends React.Component {
     axios.get('https://sc9uew29mj.execute-api.us-east-2.amazonaws.com/default/get-info')
     .then((response) => {
    this.setState( {
-    stock: response.data.Items,
-    humidity: response.data.Items.pop().Payload.humidity
+    stock: response.data.Items.sort((a, b) => a.Row - b.Row),
+    humidity: response.data.Items.sort((a, b) => a.Row - b.Row).pop().Payload.humidity
      } )
     })
     .catch((err) => {
@@ -228,8 +230,7 @@ export default class humidity extends React.Component {
           <Button onClick={this.toggleDrawer}>⚙️</Button>
         </ButtonToolbar>
             <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
-              Humidity
-            </Typography>
+            <img src={photo_pres} className="photos_youtube" width="150px" height="150px"  alt="logopng"/>            </Typography>
             <Typography variant="h5" align="center" color="textSecondary" paragraph>
              The actual humidity in the hive is :
             </Typography>
@@ -240,14 +241,13 @@ export default class humidity extends React.Component {
             The best humidity in the nest of a healthy strong colony is between 50% and 60%.
             </Typography>
             <Typography variant="h5" align="center" color="textSecondary" paragraph>
-              <br></br><br></br>
             {this.state.humidity > 60 ? (
-                <Alert severity="warning">You need {this.state.humidity - 50} % less to reach the recommanded humidity  !</Alert>
+                <Alert severity="warning"icon={false}> <img src={im_hive} className="photos_youtube" width="60px" height="60px"  alt="logopng"/>You need {this.state.humidity - 50} % less to reach the recommanded humidity  !</Alert>
               ) : (
                 this.state.humidity < 40 ? (
-                    <Alert severity="warning">You need {50 - this.state.humidity} % more to reach the recommanded humidity  !</Alert>
+                    <Alert severity="warning" icon={false}> <img src={im_hive} className="photos_youtube" width="60px" height="60px"  alt="logopng"/>You need {50 - this.state.humidity} % more to reach the recommanded humidity  !</Alert>
                   ) : (
-                    <p><Alert severity="success">You have the good % of humidity ! Try keeping this humidity ! </Alert> </p>
+                    <p><Alert severity="success" icon={false}> <img src={im_hive_valid} className="photos_youtube" width="60px" height="60px"  alt="logopng"/>You have the good % of humidity ! Try keeping this humidity ! </Alert> </p>
                  ) 
              )}            </Typography>
                {this.state.name === "Day" ? (

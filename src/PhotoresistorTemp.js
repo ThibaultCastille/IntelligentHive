@@ -7,6 +7,9 @@ import Chart from 'react-apexcharts';
 import { Alert } from '@material-ui/lab';
 import { Drawer, Button, ButtonToolbar, Radio, RadioGroup,FormGroup } from 'rsuite';
 import 'rsuite/dist/styles/rsuite-default.css';
+import im_hive from './image/1S.png'
+import im_hive_valid from './image/2S.png'
+import photo_pres from './image/photoresistor.png'
 
 export default class FormPage extends Component {
   constructor(props) {
@@ -118,8 +121,8 @@ export default class FormPage extends Component {
       axios.get('https://sc9uew29mj.execute-api.us-east-2.amazonaws.com/default/get-info')
       .then((response) => {
      this.setState( {
-      stock: response.data.Items,
-      photo: response.data.Items.pop().Payload.photoresistor
+      stock: response.data.Items.sort((a, b) => a.Row - b.Row),
+      photo: response.data.Items.sort((a, b) => a.Row - b.Row).pop().Payload.photoresistor
        } )
       })
       .catch((err) => {
@@ -175,16 +178,16 @@ export default class FormPage extends Component {
         </ButtonToolbar>
 
             <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
-            Light & Meteo Incidence
+            <img src={photo_pres} className="photos_youtube" width="150px" height="150px"  alt="logopng"/>
             </Typography>
             <Typography variant="h5" align="center" color="textSecondary" paragraph>
              The actual photoresistor value is
             </Typography>
             <Typography variant="h5" align="center" color="textPrimary" paragraph>
              {this.state.photo}             {this.state.photo > 400 ? (
-            <p>☀️</p>
+           <text>☀️</text>
               ) : (
-                <p>☁️</p>
+                <text>☁️</text>
              )}
             </Typography>
         
@@ -195,11 +198,12 @@ export default class FormPage extends Component {
                 500+ : light
             </Typography>
             <Typography variant="h5" align="center" color="textSecondary" paragraph>
-
+            <br></br>
+  
             {this.state.photo > 400 ? (
-                <Alert severity="warning">The light is high, be careful with the temperature, it can damage the hive !</Alert>
+                <Alert severity="warning" icon={false}> <img src={im_hive} className="photos_youtube" width="60px" height="60px"  alt="logopng"/>The light is high, be careful with the temperature, it can damage the hive !</Alert>
               ) : (
-                <Alert severity="warning">The light is really low, be careful if the hive is outside, it can rains!</Alert>
+                <Alert severity="warning" icon={false}> <img src={im_hive} className="photos_youtube" width="60px" height="60px"  alt="logopng"/> The light is really low, be careful if the hive is outside, it can rains!</Alert>
              )}            </Typography>
  
              {this.state.name === "Day" ? (

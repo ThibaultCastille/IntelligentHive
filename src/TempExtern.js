@@ -9,6 +9,8 @@ import Chart from 'react-apexcharts'
 import { Alert } from '@material-ui/lab';
 import { Drawer, Button, ButtonToolbar, Radio, RadioGroup,FormGroup } from 'rsuite';
 import 'rsuite/dist/styles/rsuite-default.css';
+import im_hive from './image/1S.png'
+import photo_pres from './image/temp_ext.png'
 
 export default class DynamicForm extends Component {
   constructor(props) {
@@ -156,8 +158,8 @@ export default class DynamicForm extends Component {
       axios.get('https://sc9uew29mj.execute-api.us-east-2.amazonaws.com/default/get-info')
       .then((response) => {
      this.setState( {
-        stock: response.data.Items,
-        ds18b20: response.data.Items.pop().Payload.ds18b20
+        stock: response.data.Items.sort((a, b) => a.Row - b.Row),
+        ds18b20: response.data.Items.sort((a, b) => a.Row - b.Row).pop().Payload.ds18b20
        } )
       })
       .catch((err) => {
@@ -224,7 +226,7 @@ export default class DynamicForm extends Component {
         </ButtonToolbar>
 
             <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
-              External Temperature
+            <img src={photo_pres} className="photos_youtube" width="150px" height="150px"  alt="logopng"/>
             </Typography>
             <Typography variant="h5" align="center" color="textSecondary" paragraph>
              The actual external Temperature outside the hive is
@@ -237,9 +239,9 @@ export default class DynamicForm extends Component {
             </Typography>
             <Typography variant="h5" align="center" color="textSecondary" paragraph>
             {this.state.ds18b20 > 15 ? (
-                <Alert severity="warning">You need {this.state.ds18b20 - 15} °C less to reach the recommanded temperature !</Alert>
+                <Alert severity="warning" icon={false}> <img src={im_hive} className="photos_youtube" width="60px" height="60px"  alt="logopng"/> You need {this.state.ds18b20 - 15} °C less to reach the recommanded temperature !</Alert>
               ) : (
-                <Alert severity="warning">You need {15 - this.state.ds18b20} °C more to reach the recommanded temperature !</Alert>
+                <Alert severity="warning"icon={false}> <img src={im_hive} className="photos_youtube" width="60px" height="60px"  alt="logopng"/>You need {15 - this.state.ds18b20} °C more to reach the recommanded temperature !</Alert>
 
              )}            </Typography>
             {this.state.name === "Day" ? (
