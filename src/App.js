@@ -8,7 +8,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import { Paper, Grid, TextField, FormControlLabel, Checkbox, Container, Alert } from '@material-ui/core';
+import { Paper, Grid, TextField, FormControlLabel, Checkbox, Container } from '@material-ui/core';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { Slide } from 'react-slideshow-image';
@@ -18,6 +18,7 @@ import image1 from './image/test4'
 import image2 from './image/test5.jpg'
 import image3 from './image/test3.png'
 import logopng from './image/logo1.png'
+import { Alert } from '@material-ui/lab';
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -65,6 +66,8 @@ class Home extends Component{
       email: '',
       password: '',
       checking: false,
+      login: 0,
+      register: 0,
     };
     this.handleSubmits = this.handleSubmits.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -110,13 +113,23 @@ class Home extends Component{
     axios.get('https://itqx5sskv4.execute-api.us-east-2.amazonaws.com/default/LoginReadSeverless')
       .then((response) => {
         response.data.Items.map((person, index) => (
-          person.Username === this.state.email ? (person.Password === this.state.password ? this.home() : console.log("no")) : console.log("no")
+          person.Username === this.state.email ? (person.Password === this.state.password ? this.home() : this.setState({login: 1})) : this.setState({login: 1})
       ));
       response.data.Items.map((person, index) => (
-        person.Password === this.state.password ? {checkPass : 1} : console.log("no")
+        person.Password === this.state.password ? {checkPass : 1} : this.setState({login: 1})
     ))
     console.log(response.data.Items[0].Password)
       })
+    }
+
+    LoginError() {
+      if (this.state.login === 1)
+        return (<Alert severity="error">Error with Login - Your Username or password is false!</Alert>)
+    }
+
+    RegisterError() {
+      if (this.state.login === 1)
+        return (<Alert severity="error">Error with Login - Your Username or password is false!</Alert>)
     }
 
   render() {
@@ -182,6 +195,7 @@ class Home extends Component{
                     <Grid container justify="center" style={{ marginTop: '10px' }}>
                         <Button variant="outlined" color="primary" style={{ textTransform: "none" }} onClick={() => { this.handleSubmitLogin() }}>Login</Button>
                     </Grid>
+                    {this.LoginError()}
                 </div>
         </div>
       </div>
@@ -223,6 +237,7 @@ class Home extends Component{
                     <Grid container justify="center" style={{ marginTop: '10px' }}>
                         <Button variant="outlined" color="primary" style={{ textTransform: "none" }} onClick={() => { this.handleSubmits() }}>Register</Button>
                     </Grid>
+                    {this.RegisterError()}
                 </div>
         </div>
       </div>
