@@ -50,7 +50,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
 )
 
 const checkAuth = {
-  isAuthenticated: false,
+  isAuthenticated: true,
   authenticate(cb) {
     this.isAuthenticated = true
     setTimeout(cb, 100)
@@ -82,6 +82,12 @@ class Home extends Component{
   home = () => {checkAuth.authenticate(() => {this.setState(() => ({checking: true}))
   })}
 
+  componentDidMount() {
+    if (localStorage.getItem('Logged') == 3)
+    window.location.href='/FormPage'
+
+  }
+  
   handleChange(event) {
     const inputValue = event.target.value;
     const stateField = event.target.name;
@@ -108,12 +114,17 @@ class Home extends Component{
     );
   }
 
+  test() {
+    localStorage.setItem("Logged", 3)
+    window.location.href='/FormPage'
+  }
+
   async handleSubmitLogin(event) {
 //    event.preventDefault();
     axios.get('https://itqx5sskv4.execute-api.us-east-2.amazonaws.com/default/LoginReadSeverless')
       .then((response) => {
         response.data.Items.map((person, index) => (
-          person.Username === this.state.email ? (person.Password === this.state.password ? this.home() : this.setState({login: 1})) : this.setState({login: 1})
+          person.Username === this.state.email ? (person.Password === this.state.password ? this.test() : this.setState({login: 1})) : this.setState({login: 1})
       ));
       response.data.Items.map((person, index) => (
         person.Password === this.state.password ? {checkPass : 1} : this.setState({login: 1})
